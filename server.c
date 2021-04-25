@@ -17,8 +17,8 @@
  * The function time() is used to query the operating system about the number of seconds since unix epoch.
  *
  */
-time_t getTime() {
-    int t = time(NULL);
+uint32_t getTime() {
+    uint32_t t = time(NULL);
     int years = t/(DAY_IN_YEAR*SEC_IN_DAY);
     int leapYears = years / 4;
 
@@ -194,13 +194,13 @@ void runServerUDP(server* srv) {
 		printf("Received request from: %s\n", inet_ntoa(remoteAddr.sin_addr));	
 	
 		/* compute reply and convert it to int with sprintf() */
-		sprintf(replyBuffer, "%ld", (long) getTime());	
-
+		//sprintf(replyBuffer, "%x", (uint32_t) getTime());	
+		uint32_t reply = htonl(getTime());
 		/* print reply to console */
-		printf("Sending %s\n", replyBuffer);
+		printf("Sending %u\n", reply);
 
 		/* respond */
-		msgSZ = sendto(srv->sock, (const char*) replyBuffer, MAXLINE, MSG_CONFIRM, (struct sockaddr*) &remoteAddr, size);
+		msgSZ = sendto(srv->sock, &reply, sizeof(reply), MSG_CONFIRM, (struct sockaddr*) &remoteAddr, size);
 	}
 
 	/* control does not reach this point */

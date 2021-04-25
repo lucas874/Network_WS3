@@ -20,6 +20,7 @@
 #include <netinet/in.h> /* sock_daddr_in */ 
 #include <arpa/inet.h> /* inet_aton() without complaints from compiler */
 #include <sys/wait.h> /* waitpid */
+#include <stdint.h>
 
 #define EPOCH_2_EPOCH 2208988800 /* seconds between 1 Jan 1900 00:00 to 1 Jan 1970 00:00 */
 #define PORT 50000 // not used remove
@@ -34,7 +35,7 @@ typedef int64_t timestamp_t;
 int32_t sprintf_timestampAsYYYYMMDDHHMMSS ( char* buf, timestamp_t timestamp );
 
 /* compute content of reply message */
-time_t getTime();
+uint32_t getTime();
 
 /*
  * define server type 

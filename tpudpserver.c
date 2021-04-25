@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
 		usage(argv[0]);	
 
 	/* create server using given arguments. protocol argument is "hardcoded" */
-	server* srv = createServer("udp", "192.168.0.144", atoi(argv[1]));
+	server* srv = createServer("udp", "127.0.0.1", atoi(argv[1]));
 
 	/* run server */
 	runServerUDP(srv);	
