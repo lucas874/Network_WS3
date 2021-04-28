@@ -19,10 +19,7 @@
  */
 uint32_t getTime() {
     uint32_t t = time(NULL);
-    int years = t/(DAY_IN_YEAR*SEC_IN_DAY);
-    int leapYears = years / 4;
-
-	return time(NULL)+EPOCH_2_EPOCH;
+    return time(NULL)+EPOCH_2_EPOCH;
 }
 
 
@@ -123,7 +120,7 @@ void runServerTCP(server* srv) {
 		exit(EXIT_FAILURE);
 	}
 	
-	printf("Time service ready \n");
+	printf("TCP time service ready \n");
 	while(1) {
 		if(childDescriptor = accept(srv->sock, (struct sockaddr*) &remoteAddr, &size) < 0) {
 			fprintf(stderr, "Error binding socket...\n");
@@ -133,14 +130,15 @@ void runServerTCP(server* srv) {
 		printf("Received request from: %s\n", inet_ntoa(remoteAddr.sin_addr));	
 		
 		if(pid = fork() == 0) { 			
-			/* compute reply and convert it to int with sprintf() */
-			sprintf(replyBuffer, "%ld", (long) getTime());	
+			 
+            /* compute reply and convert it from host to network byte order with htnonl */
+		    uint32_t reply = htonl(getTime());
 
 			/* print reply to console */
-			printf("Sending %s\n", replyBuffer);
+			printf("Sending %u\n", reply);
 
 			/* send reply to client. We don not care to read their request */
-			send(childDescriptor, replyBuffer, sizeof(replyBuffer), 0);
+			send(childDescriptor, &reply, sizeof(reply), 0);
 			
 			/* close child descriptor */
 			close(childDescriptor);
@@ -193,8 +191,7 @@ void runServerUDP(server* srv) {
 		/* display sender information */
 		printf("Received request from: %s\n", inet_ntoa(remoteAddr.sin_addr));	
 	
-		/* compute reply and convert it to int with sprintf() */
-		//sprintf(replyBuffer, "%x", (uint32_t) getTime());	
+		/* compute reply and convert it from host to network byte order with htnonl */
 		uint32_t reply = htonl(getTime());
 		/* print reply to console */
 		printf("Sending %u\n", reply);

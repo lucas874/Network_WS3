@@ -14,8 +14,6 @@
 #include <sys/wait.h> /* waitpid */
 #include <stdint.h>
 
-#define YEAR 31536000
-#define DAY 86400
 #define MAXLINE 1024
 
 
@@ -43,7 +41,7 @@ int main(int argc, char* argv[]) {
 	inet_aton(argv[1], &remoteAddr.sin_addr);
 
 	char buffer[MAXLINE];	
-	char replyBuffer[MAXLINE];		
+
 	socklen_t size = sizeof(remoteAddr);
     	char *ptr; // used for strtol
 	/* send request */
@@ -54,21 +52,18 @@ int main(int argc, char* argv[]) {
 	msgSZ = recvfrom(descriptor, &reply, 9, MSG_WAITALL, (struct sockaddr*) &remoteAddr, &size);
 
 
-	/* display reply */
+	/* convert from network byte order to host byte order and display reply */
 	reply = ntohl(reply);
 	printf("%u\n", reply);
-	long val;
-	//val = ntohl(replyBuffer);
-	//sprintf(replyBuffer, "%u", replyBuffer);
-	
-    	val = (long) reply;
-    	struct tm* readable_time;
-    	readable_time = localtime(&val);
-    	//printf("%u\n\n", val); 
-    /* tm_mon starts at 0!!! */
-    printf("Aarhus : %02d/%02d/%4d  %02d:%02d:%02d\n", readable_time->tm_mday, readable_time->tm_mon+1, 1900+readable_time->tm_year-70, 
-            readable_time->tm_hour, readable_time->tm_min, readable_time->tm_sec);
+	long val = (long) reply;
+    struct tm* readable_time;
     
+    readable_time = localtime(&val);
+    
+    /* tm_mon starts at 0!!! */
+    printf("Aarhus : %02d/%02d/%4d %02d:%02d:%02d\n", readable_time->tm_mday, readable_time->tm_mon+1, 1900+readable_time->tm_year-70, 
+            readable_time->tm_hour, readable_time->tm_min, readable_time->tm_sec);
+   
     return 0;
 }
 

@@ -15,9 +15,6 @@
 #include <string.h>
 
 #define MAXLINE 1024
-#define YEAR 31536000
-#define DAY 86400
-
 
 /* display instructions on command line argument */
 void usage(char* arg) {
@@ -52,11 +49,23 @@ int main(int argc, char* argv[]) {
 	send(descriptor, buffer, sizeof(buffer), 0);
 	
 	/* receive reply */
-	char buffer_reply[MAXLINE];		
-	recv(descriptor, buffer_reply, MAXLINE*sizeof(buffer_reply), 0);
-
-	/* display reply */
-	printf("%s\n", buffer_reply);	
+	uint32_t reply; 
+	recv(descriptor, &reply, sizeof(reply), 0);
+    
+    /* Convert from network byte order to host byte order */
+    reply = ntohl(reply);
+	printf("Seconds since Jan 1 1900 00:00: %u\n", reply);
+	
+    /* Convert to more readable timestamp */
+    long val;
+    val = (long) reply;
+    struct tm* readable_time;
+    readable_time = localtime(&val);
+   
+    /* display reply */
+    /* tm_mon starts at 0!!! */
+    printf("Current time in Aarhus : %02d/%02d/%4d %02d:%02d:%02d\n", readable_time->tm_mday, readable_time->tm_mon+1, 1900+readable_time->tm_year-70, 
+            readable_time->tm_hour, readable_time->tm_min, readable_time->tm_sec);
 
 	return 0;
 }
