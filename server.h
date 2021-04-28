@@ -22,7 +22,7 @@
 #include <sys/wait.h> /* waitpid */
 #include <stdint.h>
 
-#define EPOCH_2_EPOCH 2208988800 /* seconds between 1 Jan 1900 00:00 to 1 Jan 1970 00:00 */
+#define OFFSET 2208988800 /* seconds between 1 Jan 1900 00:00 to 1 Jan 1970 00:00 */
 #define PORT 50000 // not used remove
 #define QSIZE 10 /* size of queue for requests in TCP server */
 #define MAXLINE 1024 /* size of buffers passed around */
@@ -31,10 +31,7 @@
 #define SEC_IN_LEAP 31622400
 #define SEC_IN_NONLEAP 31536000
 
-typedef int64_t timestamp_t;
-int32_t sprintf_timestampAsYYYYMMDDHHMMSS ( char* buf, timestamp_t timestamp );
-
-/* compute content of reply message */
+/* compute content of reply message. Not supposed to be unsigned, but that that is the way it has been done here */
 uint32_t getTime();
 
 /*

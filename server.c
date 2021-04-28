@@ -19,7 +19,7 @@
  */
 uint32_t getTime() {
     uint32_t t = time(NULL);
-    return time(NULL)+EPOCH_2_EPOCH;
+    return time(NULL)+OFFSET;
 }
 
 
@@ -131,12 +131,14 @@ void runServerTCP(server* srv) {
 		
 		if(pid = fork() == 0) { 			
 			 
-            /* compute reply and convert it from host to network byte order with htnonl */
-		    uint32_t reply = htonl(getTime());
-
-			/* print reply to console */
+            /* compute reply */ 
+		    uint32_t reply = getTime();
+			
+            /* print reply to console */
 			printf("Sending %u\n", reply);
-
+            
+            /* convert reply  from host to network byte order with htnonl */
+            reply = htonl(reply);
 			/* send reply to client. We don not care to read their request */
 			send(childDescriptor, &reply, sizeof(reply), 0);
 			
@@ -191,12 +193,15 @@ void runServerUDP(server* srv) {
 		/* display sender information */
 		printf("Received request from: %s\n", inet_ntoa(remoteAddr.sin_addr));	
 	
-		/* compute reply and convert it from host to network byte order with htnonl */
-		uint32_t reply = htonl(getTime());
+		/* compute reply */ 
+		uint32_t reply = getTime();
 		/* print reply to console */
 		printf("Sending %u\n", reply);
-
-		/* respond */
+        
+        /* convert reply from host to network byte order with htnonl */
+        reply = htonl(reply);
+		
+        /* respond */
 		msgSZ = sendto(srv->sock, &reply, sizeof(reply), MSG_CONFIRM, (struct sockaddr*) &remoteAddr, size);
 	}
 
