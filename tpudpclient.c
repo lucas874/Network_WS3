@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 		
 	/* receive reply */
 	uint32_t reply;
-	msgSZ = recvfrom(descriptor, &reply, 9, MSG_WAITALL, (struct sockaddr*) &remoteAddr, &size);
+	msgSZ = recvfrom(descriptor, &reply, sizeof(reply), MSG_WAITALL, (struct sockaddr*) &remoteAddr, &size);
 
 
 	/* convert from network byte order to host byte order and display reply */
