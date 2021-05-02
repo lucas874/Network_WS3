@@ -13,5 +13,5 @@ The first time the client is run it does not display a reply, but after this it 
 > gcc -o tpudpclient tpudpclient.c
 
 ### Now in two different terminals run 
-> ./tpudpserver some integer x used as port <br>
-> ./tpudpclient 127.0.0.1 x
+> ./tpudpserver \<some integer x used as port\> <br>
+> ./tpudpclient 127.0.0.1 \<x\>
